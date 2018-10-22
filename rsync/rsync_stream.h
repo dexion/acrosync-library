@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_STREAM_H
 #define INCLUDED_RSYNC_STREAM_H
@@ -33,7 +33,7 @@ namespace rsync
 // integers in little-endian format.  Conversion must be added if you want to port this class to big-endian machines.
 //
 // Blocking model:
-// 
+//
 // - all reads and writes are all blocking
 // - writeAll will try to fill the read buffer when it can't write
 // - read will read from the read buffer first, and then from the stream until d_readDataLength is 0
@@ -78,9 +78,9 @@ public:
     // Check if '*d_cancelFlag' has been set.
     void checkCancelFlag() const;
 
-    // A special method for loggin into an rsync daemon.  
+    // A special method for loggin into an rsync daemon.
     void login(const char *remoteCommand, int *protocol, std::vector<std::string> *modules);
-    
+
     // Turn on read and write buffering.
     void enableBuffer();
 
@@ -102,11 +102,11 @@ public:
 
     // Limit how fast to send out data.
     void setUploadLimit(int uploadLimit);
-    
+
     // Read a unsigned 8-bit integer
     uint8_t readUInt8();
 
-    // Methods for receiving integers or strings.  
+    // Methods for receiving integers or strings.
     uint16_t readUInt16();
     int32_t readInt32();
     int64_t readInt64();
@@ -130,7 +130,7 @@ public:
     {
         return d_deletedFiles;
     }
-    
+
 private:
     // NOT IMPLEMENTED
     Stream(const Stream&);
@@ -156,7 +156,7 @@ private:
     std::string toHex(const char *buffer, int size);
 
     IO *d_io;                           // The io channel
-    
+
     int *d_cancelFlag;                  // The pointer to the cancellation flag
 
     bool d_isReadBuffered;              // If the read buffer is being used
@@ -189,7 +189,7 @@ private:
     std::vector<int> d_uploadBuckets;   // For speed limiting; each bucket contains the number of bytes sent
                                         // during a period of 1 second
     int64_t d_bucketStartTime;          // The time of the earliest counting bucket
-    
+
     std::vector<std::string> d_deletedFiles;  // Stores files deleted on the remote server
 
     int d_messageFlag;                  // The message flag; currently only used for tracing

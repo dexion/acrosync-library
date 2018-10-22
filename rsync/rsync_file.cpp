@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_file.h>
 
@@ -104,7 +104,7 @@ int64_t File::seek(int64_t offset, int method)
     if (d_handle == InvalidHandle) {
         return false;
     }
-    
+
     int moveMethods[] = { FILE_BEGIN, FILE_CURRENT, FILE_END };
     LONG distanceToMoveHigh = offset >> 32;
 
@@ -163,7 +163,7 @@ bool File::open(const char *fullPath, bool forWrite, bool reportError)
     } else {
         d_handle = ::open(fullPath, O_RDONLY);
     }
-    
+
     if (d_handle == InvalidHandle && reportError) {
         LOG_ERROR(RSYNC_OPEN) << "Failed to open '" << fullPath << "': " << strerror(errno) << LOG_END
     }

@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_util.h>
 
@@ -47,7 +47,7 @@ void Util::md_update(int protocol, md_struct *context, const char *data, int siz
     } else {
         MD4_Update(&context->md4, data, size);
     }
-    
+
 }
 
 void Util::md_final(int protocol, md_struct *context, char digest[16])
@@ -57,7 +57,7 @@ void Util::md_final(int protocol, md_struct *context, char digest[16])
     } else {
         MD4_Final(reinterpret_cast<unsigned char *>(digest), &context->md4);
     }
-    
+
 }
 
 void Util::startup()
@@ -77,7 +77,7 @@ std::string Util::getLastError()
 #if defined(WIN32) || defined(__MINGW32__)
     LPVOID lpMsgBuf;
     FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,

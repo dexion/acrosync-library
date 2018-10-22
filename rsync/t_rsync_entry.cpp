@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_entry.h>
 
@@ -53,7 +53,7 @@ int main(int /* argc */, char ** /* argv */)
         "ad/",
         "ad/ef",
         "d/",
-        "d/c ",    
+        "d/c ",
         "d/e",
         "d/c/",
         "d/c/f",

@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_pathutil.h>
 
@@ -73,7 +73,7 @@ std::string PathUtil::getBase(const char *fullPath)
             } else {
                 return std::string(pos, end - pos);
             }
-            
+
         }
         return std::string(pos + 1);
     } else {
@@ -107,7 +107,7 @@ bool PathUtil::createIntermediateDirectories(const char *top, const char *dir)
     while (*p != 0) {
         if ((*p == '/' || *p == '\\') && !path.empty()) {
             path += "/";
-            fullPath = join(top, path.c_str()); 
+            fullPath = join(top, path.c_str());
             if (!exists(fullPath.c_str())) {
                 createDirectory(fullPath.c_str());
             } else {
@@ -151,7 +151,7 @@ void PathUtil::standardizePath(std::string *path, char delimiter)
         }
     }
 }
-    
+
 } // close namespace rsync
 
 #if defined(WIN32) || defined(__MINGW32__)
@@ -299,7 +299,7 @@ bool PathUtil::rename(const char *from, const char *to, bool enableLogging)
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -318,7 +318,7 @@ bool PathUtil::createDirectory(const char *fullPath, bool hidden)
 {
     std::basic_string<wchar_t> path = convertToUTF16(fullPath);
     if (CreateDirectoryW(path.c_str(), NULL) || GetLastError() == ERROR_ALREADY_EXISTS) {
-        
+
         if (hidden) {
             DWORD attributes = GetFileAttributesW(path.c_str());
             if ( attributes == INVALID_FILE_ATTRIBUTES) {
@@ -390,7 +390,7 @@ bool enableSymbolicLinkPrivilege()
         LOG_DEBUG(RSYNC_SYMLINK) << "Can't obtain the current process token: " << Util::getLastError() << LOG_END
         return false;
     }
-    
+
     LUID luid;
     if (!LookupPrivilegeValue(NULL, "SeCreateSymbolicLinkPrivilege", &luid)) {
         LOG_DEBUG(RSYNC_SYMLINK) << "Failed to look up the symbolic link previlege value: " << Util::getLastError() << LOG_END
@@ -483,7 +483,7 @@ bool PathUtil::readSymlink(const char *fullPath, std::string *target)
     }
 
     char buffer[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
-   
+
     // Make up the control code - see CTL_CODE on ntddk.h
     DWORD controlCode = (FILE_DEVICE_FILE_SYSTEM << 16) | (FILE_ANY_ACCESS << 14) |
                         (FSCTL_GET_REPARSE_POINT << 2) | METHOD_BUFFERED;
@@ -566,7 +566,7 @@ void PathUtil::listDirectory(const char *top, const char *relativePath, std::vec
             if (path == L".acrosync") {
                 continue;
             }
-            
+
         }
 
         std::string fullPath = convertToUTF8((currentPath + path).c_str());
@@ -699,7 +699,7 @@ std::string PathUtil::getCurrentDirectory()
 class UTFConverter
 {
 public:
-    
+
     static std::string convert (const char *input)
     {
         if (s_iconv_handle == (iconv_t) -1) {
@@ -709,18 +709,18 @@ public:
                 return input;
             }
         }
-        
+
         size_t inleft = strlen(input);
         const char *inbuf = input;
 
         std::string output;
-        
+
         do {
             size_t outleft = inleft;
             char *buffer = new char[outleft];
-            
+
             char *outbuf = buffer;
-            
+
             errno = 0;
             size_t converted = iconv(s_iconv_handle, (char **) &inbuf, &inleft, &outbuf, &outleft);
             output.append(buffer, outbuf - buffer);
@@ -730,7 +730,7 @@ public:
                 // We'll just truncate it and ignore it.
                 break;
             }
-            
+
             if (errno != E2BIG) {
                 // An invalid multibyte sequence has been encountered in the input.
                 // Bad input, we can't really recover from this.
@@ -742,7 +742,7 @@ public:
         } while (1);
         return output;
     }
-    
+
 private:
     static iconv_t s_iconv_handle;
 };
@@ -844,7 +844,7 @@ void PathUtil::listDirectory(const char *top, const char *path, std::vector<Entr
     if (*path != 0 && ::strcmp(path, "./") != 0) {
         currentPath += path;
     }
- 
+
     std::vector<Entry*> currentList;
 
     if ((dir = opendir(currentPath.c_str())) == NULL) {
@@ -860,7 +860,7 @@ void PathUtil::listDirectory(const char *top, const char *path, std::vector<Entr
                 continue;
             }
         }
-        
+
         bool isDir = (dirEntry->d_type == DT_DIR);
         uint64_t size = 0;
         uint64_t time = 0;
@@ -882,10 +882,10 @@ void PathUtil::listDirectory(const char *top, const char *path, std::vector<Entr
             time = buf.st_mtime;
             mode = buf.st_mode;
         }
-        
+
         Entry *entry = new Entry(file.c_str() + topLength + 1,
                                  isDir, size, time, mode);
-        
+
         if (mode & Entry::IS_FILE && mode & Entry::IS_LINK) {
             char buffer[8192];
             ssize_t bytes = ::readlink(file.c_str(), buffer, sizeof(buffer));
@@ -897,7 +897,7 @@ void PathUtil::listDirectory(const char *top, const char *path, std::vector<Entr
                 continue;
             }
         }
-        
+
         entry->normalizePath();
         currentList.push_back(entry);
 
@@ -914,7 +914,7 @@ void PathUtil::listDirectory(const char *top, const char *path, std::vector<Entr
             currentList[i] = 0;
         }
     }
-    
+
     // Next scan the directories in reverse order
     for (int i = static_cast<int>(currentList.size() - 1); i >= 0; --i) {
         if (!currentList[i]) {

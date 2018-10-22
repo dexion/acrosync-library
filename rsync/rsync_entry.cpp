@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_entry.h>
 
@@ -110,7 +110,7 @@ void Entry::normalizePath()
         d_path.append("/");
     }
 }
-    
+
 bool Entry::contains(const Entry* other) const
 {
     return other->d_path.compare(0, d_path.size(), d_path) == 0;

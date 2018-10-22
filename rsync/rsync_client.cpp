@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_client.h>
 
@@ -88,7 +88,7 @@ void getMDDigest(int protocol, const char *data, int size, int32_t seed, char di
     Util::md_update(protocol, &context, reinterpret_cast<char *>(&seed), sizeof seed);
     Util::md_final(protocol, &context, digest);
 }
- 
+
 // Given a file size, return a good block length.
 int getBlockLength(int64_t size)
 {
@@ -126,7 +126,7 @@ public:
         , d_startTime(::time(0))
     {
     }
-    
+
     ~PartialFileKeeper()
     {
         // Keep the file only if downloading completed or lasted a while (we dont' want to waste the bytes that have
@@ -150,7 +150,7 @@ private:
     //NOT IMPLEMENTED
     PartialFileKeeper(const PartialFileKeeper&);
     PartialFileKeeper& operator=(const PartialFileKeeper&);
-    
+
     std::string d_source;
     std::string d_destination;
     uint32_t d_mode;
@@ -162,7 +162,7 @@ private:
 uint8_t validatePathCharacterTable[] =
 {
 //  Invalid on Windows:
-//      <   >   :   "   /   \   |   ?   * 
+//      <   >   :   "   /   \   |   ?   *
 //      3C  3E  3A  22  2F  5C  7C  3F  2A
 //
 //---------------------------------------------------------
@@ -249,12 +249,12 @@ void Client::setSpeedLimits(int downloadLimit, int uploadLimit)
     d_downloadLimit = downloadLimit;
     d_stream->setUploadLimit(uploadLimit);
 }
-    
+
 void Client::setDeletionEnabled(bool deletionEnabled)
 {
     d_deletionEnabled = deletionEnabled;
 }
-    
+
 void Client::addBackupPath(const char *backupPath)
 {
     d_backupPaths.push_back(std::string(backupPath));
@@ -310,7 +310,7 @@ bool Client::receiveEntry(std::string *path, bool *isDir, int64_t *size, int64_t
 
     // The flag could be more than one byte
     if (xflags & XFLAGS_EXTENDED_FLAGS) {
-        xflags |= (d_stream->readUInt8() << 8); 
+        xflags |= (d_stream->readUInt8() << 8);
         if (xflags & XFLAGS_IO_ERROR_ENDLIST) {
             int io_error = d_stream->readInt32();
             LOG_ERROR(RSYNC_ENDLIST) << "remote rsync encountered a file list error: " << io_error << LOG_END
@@ -359,7 +359,7 @@ bool Client::receiveEntry(std::string *path, bool *isDir, int64_t *size, int64_t
     *time = d_lastEntryTime;
     if (!(xflags & XFLAGS_SAME_TIME)) {
         if (d_protocol < 30) {
-            *time = d_stream->readInt32();      // send_file_entry: write_int(f, modtime) 
+            *time = d_stream->readInt32();      // send_file_entry: write_int(f, modtime)
         } else {
             *time = d_stream->readVariableInt64(4); // send_file_entry: write_varlong(...)
         }
@@ -393,7 +393,7 @@ bool Client::receiveEntry(std::string *path, bool *isDir, int64_t *size, int64_t
             read += bytes;
         }
     }
-    
+
     d_lastEntryPath = *path;
     d_lastEntryMode = *mode;
     d_lastEntryTime = *time;
@@ -407,7 +407,7 @@ void Client::sendChecksum(int index, const char *oldFile)
 
     // Send the index and the flag
     writeIndex(index);
-    d_stream->writeUInt16(0x8000); 
+    d_stream->writeUInt16(0x8000);
 
     // The size of the old file
     int64_t oldFileSize = 0;
@@ -458,14 +458,14 @@ bool Client::receiveFile(const char *remotePath, const char *newFilePath, const 
     uint32_t iflags = d_stream->readUInt16();
     if (!(iflags & 0x8000)) {
         LOG_FATAL(RSYNC_IFLAGS) << "File '" << remotePath << "' not transmitted as iflags is "
-                                << iflags << LOG_END 
+                                << iflags << LOG_END
         return false;
     }
- 
-    int32_t count = d_stream->readInt32(); 
+
+    int32_t count = d_stream->readInt32();
     int32_t blockLength = d_stream->readInt32();
     d_stream->readInt32();   // We don't need md5Length and the remainder length for receiving the file content
-    d_stream->readInt32(); 
+    d_stream->readInt32();
 
     resizeChunk(blockLength);
 
@@ -481,7 +481,7 @@ bool Client::receiveFile(const char *remotePath, const char *newFilePath, const 
     File oldFile;
     if (count) {
         if (!oldFilePath || !oldFile.open(oldFilePath, false, false)) {
-            LOG_FATAL(RSYNC_BASE) << "Local file disappeared when transferring '" 
+            LOG_FATAL(RSYNC_BASE) << "Local file disappeared when transferring '"
                                   << remotePath << "'" << LOG_END
         }
     }
@@ -496,7 +496,7 @@ bool Client::receiveFile(const char *remotePath, const char *newFilePath, const 
     Util::md_init(d_protocol, &md_context);
     if (d_protocol < 30) {
         Util::md_update(d_protocol, &md_context, reinterpret_cast<char *>(&d_checksumSeed),
-                  sizeof d_checksumSeed);  
+                  sizeof d_checksumSeed);
     }
 
     while ((token = d_stream->readInt32()) != 0) {
@@ -507,7 +507,7 @@ bool Client::receiveFile(const char *remotePath, const char *newFilePath, const 
             d_stream->read(d_chunk, token);
             newFile.write(d_chunk, token);
             Util::md_update(d_protocol, &md_context, d_chunk, token);
-            *fileSize += token; 
+            *fileSize += token;
             physicalBytes += 4 + token;
             *d_physicalBytes += 4 + token;
             logicalBytes += token;
@@ -520,7 +520,7 @@ bool Client::receiveFile(const char *remotePath, const char *newFilePath, const 
             }
             int bytes = oldFile.read(d_chunk, blockLength);
             newFile.write(d_chunk, bytes);
-            Util::md_update(d_protocol, &md_context, d_chunk, bytes); 
+            Util::md_update(d_protocol, &md_context, d_chunk, bytes);
             previousToken = token + 1;
             *fileSize += bytes;
             physicalBytes += 4;
@@ -581,7 +581,7 @@ int Client::download(const char *localTop, const char *remoteTop, const char *te
     int64_t size, time;
     uint32_t mode;
     std::string symlink;
-    
+
     if (statusOut.isConnected()) {
         statusOut((std::string("Indexing remote directory ") + remoteTop).c_str());
     }
@@ -737,7 +737,7 @@ int Client::download(const char *localTop, const char *remoteTop, const char *te
                 if (!remoteFiles[queue[i]]->isReadable()) {
                     LOG_INFO(RSYNC_SKIP) << "Skip unreadable file '" << remoteFiles[queue[i]]->getPath() << "'" << LOG_END
                 } else {
-                    std::string localFile = PathUtil::join(localPath.c_str(), remoteFiles[queue[i]]->getPath()); 
+                    std::string localFile = PathUtil::join(localPath.c_str(), remoteFiles[queue[i]]->getPath());
                     const char *oldFile = 0;
                     if (phase == 0 && PathUtil::exists(localFile.c_str())) {
                         oldFile = localFile.c_str();
@@ -789,14 +789,14 @@ int Client::download(const char *localTop, const char *remoteTop, const char *te
                     ++updated;
                     d_updatedFiles.push_back(oldFile);
                 }
-            } 
+            }
         }
 
         queue.clear();
         queue.swap(retries);
         ++phase;
     }
-    
+
     writeIndex(Stream::INDEX_DONE);
     writeIndex(Stream::INDEX_DONE);
     writeIndex(Stream::INDEX_DONE);
@@ -818,7 +818,7 @@ int Client::download(const char *localTop, const char *remoteTop, const char *te
             }
         }
     }
-    
+
     // Update all the directory entries recursively, in a depth first order, to calculate
     // the total size of all the files under each direcotry.
     std::vector<Entry*> directoryStack;
@@ -850,14 +850,14 @@ int Client::download(const char *localTop, const char *remoteTop, const char *te
                                 << "total " << *d_totalBytes << " bytes, skipped " << *d_skippedBytes
                                 << " bytes, received " << *d_logicalBytes << "/" << *d_physicalBytes
                                 << " bytes" << LOG_END
-    
+
     return updated;
 }
 
 // List the remote directory.  Works the same way as download() untile all remote entries have been received,
 // and then terminate the operation.
 bool Client::list(const char *path)
-{    
+{
     start(path, /*downloading=*/true, /*recursive=*/false, /*deleting=*/false);
 
     std::string pathStr;
@@ -865,7 +865,7 @@ bool Client::list(const char *path)
     int64_t time, size;
     uint32_t mode;
     std::string symlink;
-    
+
     std::vector<Entry*> remoteFiles;
     Util::EntryListReleaser localFilesReleaser(&remoteFiles);
 
@@ -914,7 +914,7 @@ void Client::sendEntry(Entry *entry, bool isTop, bool noDirContent)
     if (isTop) {
         xflags |= XFLAGS_TOP_DIR;
     }
-    
+
     uint32_t fileMode = entry->getMode();
 
     if (d_lastEntryMode == fileMode) {
@@ -923,7 +923,7 @@ void Client::sendEntry(Entry *entry, bool isTop, bool noDirContent)
 
     int l1 = 0, l2;
     int filePathLength = ::strlen(entry->getPath());
-    
+
     if (noDirContent && entry->isDirectory()) {
         if (d_protocol >= 30) {
             xflags |= XFLAGS_NO_CONTENT_DIR;
@@ -931,7 +931,7 @@ void Client::sendEntry(Entry *entry, bool isTop, bool noDirContent)
             --filePathLength;
         }
     }
-    
+
     if (d_lastEntryPath.size()) {
         for (; l1 < static_cast<int>(d_lastEntryPath.size()) && l1 < 255; ++l1) {
             if (entry->getPath()[l1] != d_lastEntryPath[l1]) {
@@ -1021,7 +1021,7 @@ bool Client::sendFile(int index, const char *remotePath, const char *localPath)
         return false;
     }
 
-    // This is one byte for fnamecmp_type; ignore its value, just forward it 
+    // This is one byte for fnamecmp_type; ignore its value, just forward it
     uint8_t fnamecmp_type = 0;
     if (iflags & 0x0800) {
         fnamecmp_type = d_stream->readUInt8();
@@ -1048,10 +1048,10 @@ bool Client::sendFile(int index, const char *remotePath, const char *localPath)
     int64_t size = 0;
     int64_t physicalBytes = 0;
     int64_t logicalBytes = 0;
-    
+
     // Try to open the local file.
     File f;
-    
+
     f.open(localPath, false, false);
     if (!f.isValid()) {
         // Ignore the checksums
@@ -1060,13 +1060,13 @@ bool Client::sendFile(int index, const char *remotePath, const char *localPath)
             d_stream->readInt32();
             d_stream->read(unused, md5Length);
         }
-            
+
         // Note that here we don't forward the index to the remote receiver.
-            
+
         LOG_INFO(RSYNC_UPLOAD) << "Ignore '" << remotePath << "' due to open error" << LOG_END
         return false;
     }
-    
+
     // Forward the index and the 'iflags' to the remote receiver.
     writeIndex(index);
     d_stream->writeUInt16(iflags);
@@ -1143,7 +1143,7 @@ bool Client::sendFile(int index, const char *remotePath, const char *localPath)
             getRollingChecksum(d_chunk, blockLength, s1, s2);
 
             // 'n' is the number of valid bytes in d_chunk; 'i' points to the next byte to be
-            // counted in 's1' and 's2'.  All bytes before 'i' (and after i - blockLength if 
+            // counted in 's1' and 's2'.  All bytes before 'i' (and after i - blockLength if
             // i > blockLength) should have been counted.
             while (true) {
                 s = (s1 & 0xffff) | (s2 << 16);
@@ -1300,7 +1300,7 @@ int Client::upload(const char *localTop, const char *remoteTop, const std::set<s
         // This top entry is required to enable remote deletion under the top directory.
         localFiles.push_back(new Entry("./", true, 0, ::time(0),
                              Entry::IS_DIR | Entry::IS_ALL_READABLE | Entry::IS_WRITABLE | Entry::IS_EXECUTABLE));
-        
+
         if (includeFiles) {
             // We must include parent directories of every file.
             std::set<std::string> entries;
@@ -1356,20 +1356,20 @@ int Client::upload(const char *localTop, const char *remoteTop, const std::set<s
         }
         localFiles.push_back(entry);
     }
-   
- 
+
+
     *d_totalBytes = 0;
     *d_physicalBytes = 0;
     *d_logicalBytes = 0;
     *d_skippedBytes = 0;
-    
+
     start(remoteTop, /*downloading=*/false, /*isRecursive=*/true, /*isDeleting=*/d_deletionEnabled);
-    
+
     for (unsigned int i = 0; i < localFiles.size(); ++i) {
         sendEntry(localFiles[i], i == 0);
         *d_totalBytes += localFiles[i]->getSize();
     }
-    
+
     if (statusOut.isConnected()) {
         statusOut("Upload starting...");
     }
@@ -1377,7 +1377,7 @@ int Client::upload(const char *localTop, const char *remoteTop, const std::set<s
     d_stream->writeUInt8(0);
 
     if (d_protocol < 30) {
-        d_stream->writeInt32(0); 
+        d_stream->writeInt32(0);
     }
 
     d_stream->flushWriteBuffer();
@@ -1408,17 +1408,17 @@ int Client::upload(const char *localTop, const char *remoteTop, const std::set<s
             LOG_INFO(RSYNC_RETRY) << "Attempting to upload '" << localFiles[index]->getPath() << "' again" << LOG_END
             *d_logicalBytes -= localFiles[index]->getSize();
         }
-        
+
         for (int i = lastIndex + 1; i < index; ++i) {
             *d_skippedBytes += localFiles[i]->getSize();
         }
         lastIndex = index;
-        
+
         std::string localFile = PathUtil::join(localPath.c_str(), localFiles[index]->getPath());
         if (sendFile(index, localFiles[index]->getPath(), localFile.c_str())) {
             ++updated;
             d_updatedFiles.push_back(localFile);
-        }        
+        }
     }
 
     for (int i = 0; i < 2; ++i) {
@@ -1447,7 +1447,7 @@ int Client::upload(const char *localTop, const char *remoteTop, const std::set<s
 }
 
 // To remove a remote file or directory, send a file entry list containing only './', and set the include/exclude
-// patterns to exclude everything but the file to be deleted.  
+// patterns to exclude everything but the file to be deleted.
 void Client::remove(const char *remoteFile)
 {
     std::string remotePath = remoteFile;
@@ -1475,14 +1475,14 @@ void Client::remove(const char *remoteFile)
     d_stream->writeInt32(excludeFilter.size());
     d_stream->write(excludeFilter.c_str(), excludeFilter.size());
 
-    d_stream->writeInt32(0); 
+    d_stream->writeInt32(0);
     d_stream->flushWriteBuffer();
 
     Entry entry("./", true, 0, ::time(0), 0);
     sendEntry(&entry, true);
     d_stream->writeUInt8(0); // no more file to send; end of list
     if (d_protocol < 30) {
-        d_stream->writeInt32(0); 
+        d_stream->writeInt32(0);
     }
     d_stream->flushWriteBuffer();
 
@@ -1511,7 +1511,7 @@ void Client::mkdir(const char *path)
     if (remoteDir.size() == 0) {
         remoteDir = "~";
     }
-    
+
     start(remoteDir.c_str(), /*downloading=*/false, /*recursive=*/false, /*isDeleting=*/false);
 
     Entry entry((PathUtil::getBase(remotePath.c_str()) + "/").c_str(), true, 0, ::time(0), Entry::IS_ALL_READABLE | Entry::IS_WRITABLE | Entry::IS_EXECUTABLE);
@@ -1519,7 +1519,7 @@ void Client::mkdir(const char *path)
 
     d_stream->writeUInt8(0); // no more file to send; end of list
     if (d_protocol < 30) {
-        d_stream->writeInt32(0); 
+        d_stream->writeInt32(0);
     }
     d_stream->flushWriteBuffer();
 
@@ -1550,7 +1550,7 @@ void Client::link(const char *remotePath, const char *link)
 
     d_stream->writeUInt8(0); // no more file to send; end of list
     if (d_protocol < 30) {
-        d_stream->writeInt32(0); 
+        d_stream->writeInt32(0);
     }
     d_stream->flushWriteBuffer();
     d_stream->flush();
@@ -1606,7 +1606,7 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
             command += out.str();
         }
     }
-    
+
     // Uncomment these if you want logging on the server.  Note that '--log-file' isn't a valid option under the daemon
     // mode.
     //command += "-vvvv ";
@@ -1614,13 +1614,13 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
 
     // For receiving the list of deleted remote files properly.
     command += "--out-format=%n ";
-    
+
     command += "--links ";
 
     if (recursive) {
         command += "--recursive ";
     }
-    
+
     if (isDeleting) {
         command += "--delete-during ";
     }
@@ -1630,7 +1630,7 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
         command += d_backupPaths[i];
         command += " ";
     }
-    
+
     command += "-tude. . ";
 
     if (*remotePath == 0) {
@@ -1644,13 +1644,13 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
     }
 
     d_io->createChannel(command.c_str(), &d_protocol);
-    
+
     LOG_DEBUG(RSYNC_COMMAND) << "rsync command: " << command << LOG_END
 
     if (d_usingSSH) {
         // Negotiate the protocol version
         d_stream->writeInt32(d_protocol);
-        int protocol = d_stream->readInt32();      
+        int protocol = d_stream->readInt32();
         // If 'd_protocol' isn't supported by the server then use what it wants.
         if (protocol < d_protocol) {
             d_protocol = protocol;
@@ -1662,9 +1662,9 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
     } else {
         d_stream->login(command.c_str(), &d_protocol, 0);
     }
-    
+
     if (d_protocol >= 30) {
-        uint8_t compatibilityFlag = d_stream->readUInt8(); 
+        uint8_t compatibilityFlag = d_stream->readUInt8();
         if (compatibilityFlag & 0x1) {
             LOG_FATAL(RSYNC_COMPAT) << "Server demands incremental directory recursion" << LOG_END
         }
@@ -1673,7 +1673,7 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
             LOG_FATAL(RSYNC_SAFE_LIST) << "Server demands safe file lists" << LOG_END
         }*/
     }
-    
+
     d_checksumSeed = d_stream->readInt32();
 
     d_stream->enableBuffer();
@@ -1684,7 +1684,7 @@ void Client::start(const char *remotePath, bool isDownloading, bool recursive, b
     d_lastEntryPath = "";
     d_lastEntryMode = 0;
     d_lastEntryTime = 0;
-    
+
     if (isDownloading || d_deletionEnabled) {
         d_stream->writeInt32(0);
         d_stream->flushWriteBuffer();
@@ -1700,7 +1700,7 @@ const std::vector<std::string> &Client::getDeletedFiles()
 {
     return d_deletedFiles;
 }
-    
+
 const std::vector<std::string> &Client::getUpdatedFiles()
 {
     return d_updatedFiles;

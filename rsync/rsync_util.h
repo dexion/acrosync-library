@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_UTIL_H
 #define INCLUDED_RSYNC_UTIL_H
@@ -81,7 +81,7 @@ struct Util
 
     // Elevate the process to have a higher priviledge level.
     static bool elevateProcess();
-#endif    
+#endif
 };
 
 }

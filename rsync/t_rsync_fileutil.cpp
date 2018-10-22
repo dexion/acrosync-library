@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_pathutil.h>
 #include <rsync/rsync_file.h>
@@ -42,10 +42,10 @@ void createFile(const char *top, const char *name, const char *content)
 std::string getFileChecksum(const char *file)
 {
     char buffer[32 * 1024];
-   
+
     MD5_CTX md5;
     MD5_Init(&md5);
- 
+
     File f(file, false);
     int bytes = 0;
     while ((bytes = f.read(buffer, sizeof buffer)) > 0) {
@@ -99,7 +99,7 @@ int main(int /* argc */, char ** /* argv */)
     // to verify the sorting result.
     ASSERT(PathUtil::createDirectory(PathUtil::join(top.c_str(), "test_file4").c_str()));
     ASSERT(PathUtil::createDirectory(PathUtil::join(top.c_str(), "test_file3").c_str()));
-     
+
     std::vector<Entry*> files, directories;
 
     PathUtil::listDirectory(top.c_str(), "", &files, &directories);
@@ -119,7 +119,7 @@ int main(int /* argc */, char ** /* argv */)
     }
     for (unsigned int i = 0; i < directories.size(); ++i) {
         delete directories[i];
-    } 
+    }
     PathUtil::removeDirectoryRecursively(top.c_str());
     return ASSERT_COUNT;
 }

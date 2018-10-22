@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_stream.h>
 
@@ -88,10 +88,10 @@ std::string base64_encode(char *data, int length)
     b64 = BIO_push(b64, bmem);
     BIO_write(b64, data, length);
     BIO_flush(b64);
-    
+
     BUF_MEM *bptr = NULL;
     BIO_get_mem_ptr(b64, &bptr);
-    
+
     std::vector<char> buff(bptr->length, 0);
 
     memcpy(&buff.front(), bptr->data, bptr->length-1);
@@ -100,7 +100,7 @@ std::string base64_encode(char *data, int length)
 
     return std::string(buff.data());
 }
-    
+
 } // unnamed namespace
 
 Stream::Stream(IO* io, int *cancelFlag)
@@ -322,14 +322,14 @@ void Stream::readMessageContent(uint32_t flag)
         }
         readAll(message, length);
         LOG_FATAL(RSYNC_IOERROR) << "Remote I/O error" << LOG_END
-        break; 
+        break;
     case MSG_SUCCESS:
         if (length != 4) {
             LOG_FATAL(RSYNC_MSG) << "Invalid success message" << LOG_END
         }
         readAll(message, length);
         LOG_INFO(RSYNC_SUCESS) << "Remote operator successful" << LOG_END
-        break; 
+        break;
     case MSG_NO_SEND:
         if (length != 4) {
             LOG_FATAL(RSYNC_MSG) << "Invalid no_send message:" << flag << LOG_END
@@ -360,7 +360,7 @@ void Stream::readMessageContent(uint32_t flag)
         d_deletedFiles.push_back(message);
         break;
     default:
-        LOG_FATAL(RSYNC_FLAG) << "Unexpected flag: " << flag << " (" 
+        LOG_FATAL(RSYNC_FLAG) << "Unexpected flag: " << flag << " ("
             << d_messageFlag << ":"
             << d_isReadBuffered << ":"
             << d_isWriteBuffered << ":"
@@ -394,16 +394,16 @@ bool Stream::isDataAvailable()
 }
 
 // Log into the rsync daemon.  Not used in the SSH mode.
-// 
+//
 // TODO: This method probably shouldn't belong to this class.  Find a better place.
 void Stream::login(const char *remoteCommand, int *protocol, std::vector<std::string> *moduleListing)
 {
     std::string username;
     std::string password;
     std::string module;
-    
+
     d_io->getConnectInfo(&username, &password, &module);
-    
+
     std::stringstream output;
     output << "@RSYNCD: " << *protocol << ".0\n";
     writeLine(output.str(), true);
@@ -414,7 +414,7 @@ void Stream::login(const char *remoteCommand, int *protocol, std::vector<std::st
         LOG_FATAL(RSYNCD_GREETING) << "Greeting not received from the daemon" << LOG_END
         return;
     }
-    
+
     int remoteProtocol = atoi(line.c_str() + 9);
     if (remoteProtocol >= 31) {
         *protocol = 30;
@@ -427,8 +427,8 @@ void Stream::login(const char *remoteCommand, int *protocol, std::vector<std::st
         LOG_FATAL(RSYNCD_GREETING) << "Greeting not received from the daemon" << LOG_END
         return;
     }
-    
-    while (true) { 
+
+    while (true) {
         line = readLine();
         if (line.compare(0, 18, "@RSYNCD: AUTHREQD ") == 0) {
             Util::md_struct mdContext;
@@ -447,12 +447,12 @@ void Stream::login(const char *remoteCommand, int *protocol, std::vector<std::st
             output << username << " " << response;
             writeLine(output.str(), true);
         } else if (line.compare(0, 11, "@RSYNCD: OK") == 0) {
-            
+
             // We need to break up the remote command to extract command line arguments.
             std::string command(remoteCommand);
             size_t begin = 0;
             std::vector<std::string> args;
-            
+
             while(begin != std::string::npos) {
                 if (command[begin] == '"' && command.find_first_of('"', begin + 1)) {
                     size_t end = command.find_first_of('"', begin + 1);
@@ -468,13 +468,13 @@ void Stream::login(const char *remoteCommand, int *protocol, std::vector<std::st
                     begin = command.find_first_not_of(" ", end);
                 }
             }
-            
+
             // Starting from 1 as the rsync executable path is not needed.
             for (unsigned int i = 1; i < args.size(); ++i) {
                 writeLine(args[i], *protocol == 29);
             }
             writeLine(std::string(""), *protocol == 29);
-            
+
             return;
         } else if (line.compare(0, 8, "@ERROR: ") == 0) {
             LOG_FATAL(RSYNCD_ERROR) << "Failed to establish the connection: " << line.c_str() + 8 << LOG_END
@@ -601,11 +601,11 @@ int Stream::writeAll(const char *buffer, int size)
         sum += size / 1024;
 
         if (sum / d_uploadBuckets.size() > d_uploadLimit) {
-            
+
             //    sum + size / 1024
             //   --------------------- == uploadLimit
-            //    now + delay - start 
-            
+            //    now + delay - start
+
             int delay = ((sum / d_uploadLimit) - (now - d_bucketStartTime) / 1000000.0) * 1000.0;
             if (delay > 0) {
                 if (delay > 1000) {
@@ -637,7 +637,7 @@ int Stream::writeAll(const char *buffer, int size)
 
     return size;
 }
- 
+
 void Stream::flush()
 {
     d_io->flush();
@@ -685,11 +685,11 @@ void Stream::timedWait(bool isReading, const char *location)
         }
     }
 }
-    
+
 void Stream::checkCancelFlag() const
 {
     if (d_cancelFlag && *d_cancelFlag) {
-        LOG_FATAL(RSYNC_CANCEL) << "The operation was cancelled by user" << LOG_END        
+        LOG_FATAL(RSYNC_CANCEL) << "The operation was cancelled by user" << LOG_END
     }
 }
 
@@ -939,10 +939,10 @@ std::string Stream::readLine()
     std::string line;
     while (true) {
         char c;
-        
+
         while (readAll(&c, 1) != 1) {
         }
-        
+
         if (c == 0 || c == '\n') {
             return line;
         }

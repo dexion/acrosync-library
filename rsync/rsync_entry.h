@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_ENTRY_H
 #define INCLUDED_RSYNC_ENTRY_H
@@ -129,43 +129,43 @@ public:
     {
         return (d_mode & IS_LINK) && (d_mode & IS_FILE);
     }
-    
+
     bool isRegular() const
     {
         return (d_mode & IS_FILE) && !(d_mode & IS_DIR);
     }
-    
+
     int32_t getMode() const
     {
         return d_mode;
     }
-    
+
     void addSize(int64_t size)
     {
         d_size += size;
     }
-    
+
     void setSymlink(const std::string& symlink)
     {
         delete d_symlink;
         d_symlink = new std::string(symlink);
     }
-    
+
     const char *getSymlink() const
     {
         return d_symlink->c_str();
     }
-    
+
     int getSymlinkLength() const
     {
         return static_cast<int>(d_symlink->size());
     }
-    
+
     void *getData() const
     {
         return d_data;
     }
-    
+
     void setData(void *data) {
         d_data = data;
     }

@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_socketio.h>
 
@@ -55,7 +55,7 @@ void SocketIO::connect(const char *serverList, int port, const char *user, const
     d_password = password;
     d_module = module;
 }
-    
+
 void SocketIO::getConnectInfo(std::string *username, std::string *password, std::string *module)
 {
     *username = d_user;
@@ -67,11 +67,11 @@ void SocketIO::setModule(const char *module)
 {
     d_module = module;
 }
-    
+
 void SocketIO::createChannel(const char *remoteCommand, int *protocol)
 {
     closeChannel();
-    
+
     std::stringstream error;
     d_socket = rsync::SocketUtil::create(d_serverList.c_str(), d_port, &error);
     if (d_socket == -1) {
@@ -79,7 +79,7 @@ void SocketIO::createChannel(const char *remoteCommand, int *protocol)
         return;
     }
 }
-    
+
 void SocketIO::closeChannel()
 {
     if (d_socket != -1) {
@@ -106,16 +106,16 @@ bool SocketIO::isClosed()
 {
     return false;
 }
-    
+
 bool SocketIO::isReadable(int timeoutInMilliSeconds)
 {
     return SocketUtil::isReadable(d_socket, timeoutInMilliSeconds);
-        
+
 }
 
 bool SocketIO::isWritable(int timeoutInMilliSeconds)
 {
     return SocketUtil::isWritable(d_socket, timeoutInMilliSeconds);
 }
-        
+
 } // namespace rsync

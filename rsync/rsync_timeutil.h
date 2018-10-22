@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_TIMEUTIL_H
 #define INCLUDED_RSYNC_TIMEUTIL_H
@@ -32,7 +32,7 @@ struct TimeUtil
     // Convert a Unix time to a Windows time.
     static void getWindowsTime(int64_t unixTime, uint32_t *windowsTimeHigh, uint32_t *windowsTimeLow);
 #endif
-	
+
 	// Return current time in microseconds.
     static int64_t getTimeOfDay();
 

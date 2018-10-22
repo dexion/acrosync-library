@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_SSHIO_H
 #define INCLUDED_RSYNC_SSHIO_H
@@ -43,10 +43,10 @@ public:
 
     void connect(const char *serverList, int port, const char *user, const char *password,  const char *keyFile, const char *hostKey);
     void getConnectInfo(std::string *username, std::string *password, std::string *module);
-    
+
     void createChannel(const char *remoteCommand, int *protocol);
     void closeChannel();
-    
+
     void closeSession();
 
     virtual int read(char *buffer, int size);
@@ -65,7 +65,7 @@ public:
     void dump();
 
     block::out<bool(const char*, const char*)> hostKeyOut;
-    
+
 private:
     // NOT IMPLEMENTED
     SSHIO(const SSHIO&);

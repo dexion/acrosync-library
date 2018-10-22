@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #if defined(WIN32) || defined(__MINGW32__)
 #define _WIN32_WINNT 0x501 // means windows XP and above
@@ -82,7 +82,7 @@ int SocketUtil::create(const char *host, int port, std::stringstream *error)
     for (; ptr != 0; ptr = ptr->ai_next) {
         if (ptr->ai_family == AF_INET || ptr->ai_family == AF_INET6) {
             break;
-        } 
+        }
     }
 
     if (!ptr) {
@@ -115,16 +115,16 @@ int SocketUtil::create(const char *host, int port, std::stringstream *error)
         *error << "Failed to create the socket: " << strerror(errno);
         return -1;
     }
-    
+
 #ifdef __APPLE__
     // Ignore SIGPIPE
     int value = 1;
     setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&value, sizeof(value));
 #endif
-    
+
 #endif
-    
-    
+
+
 #if defined(WIN32) || defined(__MINGW32__)
     u_long iMode=1;
     result = ioctlsocket(sock, FIONBIO, &iMode);
@@ -136,7 +136,7 @@ int SocketUtil::create(const char *host, int port, std::stringstream *error)
 #else
     fcntl(sock, F_SETFL, O_NONBLOCK);
 #endif
-    
+
 #if defined(WIN32)
     int bufferLength = 1024 * 1024;
     result = setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (char*)&bufferLength, sizeof(bufferLength));
@@ -164,9 +164,9 @@ int SocketUtil::create(const char *host, int port, std::stringstream *error)
         LOG_ERROR(SOCKET_NODELAY) << "Failed to set the TCP_NODELAY option: " << strerror(errno) << LOG_END
     }*/
 #endif
-    
+
     result = connect(sock, reinterpret_cast<SOCKADDR*>(&addr), addrlen);
-    
+
     fd_set fdset;
     struct timeval tv;
     FD_ZERO(&fdset);
@@ -234,7 +234,7 @@ int SocketUtil::write(int socket, const char *buffer, int size)
     return rc;
 }
 
-#else 
+#else
 
 int SocketUtil::read(int socket, char *buffer, int size)
 {
@@ -276,8 +276,8 @@ bool SocketUtil::isReadable(int socket, int timeoutInMilliSeconds)
     struct timeval tv;
     tv.tv_sec = timeoutInMilliSeconds / 1000;
     tv.tv_usec = (timeoutInMilliSeconds % 1000) * 1000;
-  
-    fd_set readFDs; 
+
+    fd_set readFDs;
     FD_ZERO(&readFDs);
     FD_SET(static_cast<unsigned int>(socket), &readFDs);
 
@@ -289,8 +289,8 @@ bool SocketUtil::isWritable(int socket, int timeoutInMilliSeconds)
     struct timeval tv;
     tv.tv_sec = timeoutInMilliSeconds / 1000;
     tv.tv_usec = (timeoutInMilliSeconds % 1000) * 1000;
-  
-    fd_set writeFDs; 
+
+    fd_set writeFDs;
     FD_ZERO(&writeFDs);
     FD_SET(static_cast<unsigned int>(socket), &writeFDs);
 

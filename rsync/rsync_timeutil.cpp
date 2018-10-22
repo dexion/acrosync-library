@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_timeutil.h>
 
@@ -68,7 +68,7 @@ int64_t TimeUtil::getTimeOfDay()
     gettimeofday(&t, 0);
     int64_t value = static_cast<int64_t>(t.tv_sec);
     value = value * 1000000 + t.tv_usec;
-    return value;   
+    return value;
 }
 
 void TimeUtil::sleep(int milliseconds)

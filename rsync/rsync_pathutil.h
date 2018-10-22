@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_PATHUTIL_H
 #define INCLUDED_RSYNC_PATHUTIL_H
@@ -65,13 +65,13 @@ struct PathUtil
 
     // If 'directory' is a prefix of 'path'
     static bool isPrefix(const char *directory, const char *path);
- 
+
     // Create all intermediate directories between 'top' and 'top/dir'.
     static bool createIntermediateDirectories(const char *top, const char *dir);
 
     // List the directory joined by 'top' and 'path'; add file entries to 'fileList', and directory entries to
     // 'directoryList'.  If 'includedPatterns' is specified, add only those entries that match the patterns.
-    // Files or directories matching any pattern specified in 'excludePatterns' will not be included. 
+    // Files or directories matching any pattern specified in 'excludePatterns' will not be included.
     // 'normalization' is used to indicate to convert paths from UTF8-MAC to UTF8.
     static void listDirectory(const char *top, const char *path, std::vector<Entry*> *fileList,
                        std::vector<Entry*> *directoryList, bool normalization = false);

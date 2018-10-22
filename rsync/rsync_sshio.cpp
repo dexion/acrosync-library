@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #include <rsync/rsync_sshio.h>
 
@@ -102,11 +102,11 @@ void SSHIO::connect(const char *serverList, int port, const char *user, const ch
     std::string serverString = serverList;
 
     Util::tokenize(serverString, &servers, ";, \t");
-    
+
     if (servers.size() == 0) {
         LOG_FATAL(SSH_INIT) << "No server specified" << LOG_END
     }
-    
+
     unsigned int i;
     if (hostKey) {
         // Only use servers[0];
@@ -115,7 +115,7 @@ void SSHIO::connect(const char *serverList, int port, const char *user, const ch
         d_socket = SocketUtil::create(servers[i].c_str(), port, &error);
         if (d_socket == -1) {
             LOG_FATAL(SOCKET_CONNECT) << error.str() << LOG_END
-        }        
+        }
     } else {
         for (i = 0; i < servers.size(); ++i) {
             std::stringstream error;
@@ -125,7 +125,7 @@ void SSHIO::connect(const char *serverList, int port, const char *user, const ch
                     LOG_FATAL(SOCKET_CONNECT) << error.str() << LOG_END
                 } else {
                     LOG_ERROR(SOCKET_CONNECT) << error.str() << LOG_END
-                    
+
                 }
             } else {
                 break;
@@ -164,7 +164,7 @@ void SSHIO::connect(const char *serverList, int port, const char *user, const ch
             hash += hex[c / 16];
             hash += hex[c % 16];
         }
-        
+
         if (hostKeyOut.isConnected()) {
             if (!hostKeyOut(servers[i].c_str(), hash.c_str())) {
                 LOG_FATAL(SSH_HOSTKEY) << "New host key for server '" << servers[i] << "' is not accepted" << LOG_END
@@ -175,7 +175,7 @@ void SSHIO::connect(const char *serverList, int port, const char *user, const ch
                 return;
             }
         }
-        
+
     }
 
     const char *methods = libssh2_userauth_list(d_session, user, ::strlen(user));
@@ -223,7 +223,7 @@ void SSHIO::getConnectInfo(std::string * /*username*/, std::string * /*password*
 {
     LOG_FATAL(SSH_NOT_IMPLEMENTED) << "This 'getConnectInfo' method is never supposed to be called" << LOG_END
 }
-    
+
 void SSHIO::createChannel(const char *remoteCommand, int * /* protocol */)
 {
     closeChannel();
@@ -288,7 +288,7 @@ void SSHIO::closeSession()
 
 int SSHIO::read(char *buffer, int size)
 {
-    // Make sure the receive window is large 
+    // Make sure the receive window is large
     const unsigned long minWindowSize = 128 * 1024;
     unsigned long windowSize = libssh2_channel_window_read_ex(d_channel, NULL, NULL);
     if (windowSize < minWindowSize) {

@@ -11,7 +11,7 @@
 // LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL. 
+// language governing rights and limitations under the RPL.
 
 #ifndef INCLUDED_RSYNC_CLIENT_H
 #define INCLUDED_RSYNC_CLIENT_H
@@ -39,7 +39,7 @@ public:
     // 'rsyncCommand' is the path of the rsync executable on the server.  'preferredProtocol' is either 29 or 30.
     // 'd_cancelFlagAddress' points to flag whose value change will abort the sync operation immediately.
     Client(IO*io, const char *rsyncCommand, int preferredProtocol, int *cancelFlagAddress);
-    
+
     // Destructor.  Does not delete the io channel so it can be reused.
     ~Client();
 
@@ -91,15 +91,15 @@ public:
     //                  when the rdiff algorithm is in effect.
     // '*skippedBytes': the bytes of files that do not need to be synced.
     void setStatsAddresses(int64_t *totalBytes, int64_t *physicalBytes, int64_t *logicalBytes, int64_t *skippedBytes);
-    
+
     // Think this as a callback.  The function connected to it will be called when the info about an file/dir entry
     // is about to be sent (for instance, during the 'list' call)
     block::out<void(const char * /*path*/, bool /*isDir*/, int64_t /*size*/, int64_t /*time*/,
                     const char * /*symlink*/)> entryOut;
-   
+
     // Used to output a status message to indicate the sync progress.
     block::out<void(const char * status)> statusOut;
- 
+
     // Return the files that have been created or modified after the sync is complete.  Does not include any
     // directories.
     const std::vector<std::string> &getUpdatedFiles();
@@ -131,7 +131,7 @@ private:
     // Receive a file from the remote server.
     bool receiveFile(const char *remotePath, const char *newFile, const char *oldFile, int64_t *fileSize);
 
-    // Start a new rsync session. 
+    // Start a new rsync session.
     void start(const char *remotePath, bool isDownloading, bool recursive, bool isDeleting);
 
     // Close the rsync session.
@@ -156,7 +156,7 @@ private:
     std::vector<std::string> d_excludePatterns;    // exclude patterns
 
     std::vector<std::string> d_backupPaths;        // paths of previous backups; used by the '--link-desk' option
-    
+
     int32_t d_protocol;            // rsync protocol version
     int32_t d_checksumSeed;        // the seed for checksum calculation
     int64_t d_lastEntryTime;       // the modified time of the last entry transmitted
@@ -177,17 +177,17 @@ private:
 
     char *d_chunk;                 // a chunk buffer used to send or receive file content
     int d_chunkSize;               // the size of 'd_chunk'
-    
+
     int64_t *d_totalBytes;         // the total bytes of all bytes in the source directory
     int64_t *d_physicalBytes;      // the number of bytes that have been transmitted by the network
     int64_t *d_logicalBytes;       // the number of bytes that have been synced
     int64_t *d_skippedBytes;       // the number of bytes that are the same on the both sides.
 
     int64_t d_dummyCounter;        // used to initialize the above stats counter if they are not being used.
-    
+
     std::vector<std::string> d_deletedFiles;  // files deleted by the current sync
     std::vector<std::string> d_updatedFiles;  // files created or modified by the current sync
-    
+
 };
 
 
