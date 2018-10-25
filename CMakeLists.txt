@@ -24,7 +24,10 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 add_library(acrosync SHARED rsync/rsync_client.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} openssl-includes)
+set(dependencies_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../dependencies)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} openssl-includes "${dependencies_DIR}/openssl/libs/${ANDROID_ABI}/include")
+link_directories("${dependencies_DIR}/openssl/libs/${ANDROID_ABI}")
 
 # copy out the lib binary and remove generated files
 set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../distribution)
