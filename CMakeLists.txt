@@ -22,23 +22,37 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-add_library(acrosync SHARED rsync/rsync_client.cpp)
+add_library(acrosync STATIC rsync/rsync_client.cpp
+        rsync/rsync_entry.cpp
+        rsync/rsync_file.cpp
+        rsync/rsync_io.cpp
+        rsync/rsync_log.cpp
+        rsync/rsync_pathutil.cpp
+        rsync/rsync_socketutil.cpp
+        rsync/rsync_sshio.cpp
+        rsync/rsync_stream.cpp
+        rsync/rsync_timeutil.cpp
+        rsync/rsync_util.cpp)
 
 set(dependencies_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../dependencies)
+set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../distribution)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} openssl-includes "${dependencies_DIR}/openssl/libs/${ANDROID_ABI}/include")
-link_directories("${dependencies_DIR}/openssl/libs/${ANDROID_ABI}")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} "${dependencies_DIR}/openssl/include" "${dependencies_DIR}/libssh2/include")
+link_directories("${dependencies_DIR}/openssl/libs/${ANDROID_ABI}" "${dependencies_DIR}/libssh2/libs/${ANDROID_ABI}")
+#link_directories("${dependencies_DIR}/libssh2/libs/${ANDROID_ABI}")
 
 # copy out the lib binary and remove generated files
-set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../distribution)
 set_target_properties(acrosync
                       PROPERTIES
-                      LIBRARY_OUTPUT_DIRECTORY
+                      ARCHIVE_OUTPUT_DIRECTORY
                       "${distribution_DIR}/acrosync/lib/${ANDROID_ABI}")
 
 add_custom_command(TARGET acrosync POST_BUILD
                    COMMAND "${CMAKE_COMMAND}" -E
                    copy "${CMAKE_CURRENT_SOURCE_DIR}/rsync/rsync_client.h"
                    "${distribution_DIR}/acrosync/include/rsync_client.h"
+        #                   **** the following 2 lines are for potential future debug purpose ****
+        #                   COMMAND "${CMAKE_COMMAND}" -E
+        #                   remove_directory "${CMAKE_CURRENT_BINARY_DIR}"
                    COMMENT "Copying rsync to output directory")
 
