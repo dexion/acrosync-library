@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-add_library(acrosync STATIC rsync/rsync_client.cpp
+add_library(acrosynced STATIC rsync/rsync_client.cpp
         rsync/rsync_entry.cpp
         rsync/rsync_file.cpp
         rsync/rsync_io.cpp
@@ -41,10 +41,25 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} "${dependencies_DIR}/openssl/inc
 link_directories("${dependencies_DIR}/openssl/libs/${ANDROID_ABI}" "${dependencies_DIR}/libssh2/libs/${ANDROID_ABI}")
 
 # copy out the lib binary and remove generated files
-set_target_properties(acrosync
+set_target_properties(acrosynced
                       PROPERTIES
                       ARCHIVE_OUTPUT_DIRECTORY
-                      "${distribution_DIR}/acrosync/lib/${ANDROID_ABI}")
+                      "${distribution_DIR}/acrosynced/lib/${ANDROID_ABI}")
+
+
+add_library(libssh2 STATIC IMPORTED)
+set_target_properties(libssh2 PROPERTIES IMPORTED_LOCATION
+        ${dependencies_DIR}/libssh2/libs/${ANDROID_ABI}/libssh2.a)
+
+add_library(lib_openssl STATIC IMPORTED)
+set_target_properties(lib_openssl PROPERTIES IMPORTED_LOCATION
+        ${dependencies_DIR}/openssl/libs/${ANDROID_ABI}/libcrypto.a)
+
+
+target_link_libraries(acrosynced
+        z
+        libssh2
+        lib_openssl)
 
 
 set( ACROSYNC_HEADERS
@@ -66,10 +81,10 @@ set( ACROSYNC_HEADERS
 # do the copying
 foreach( file_i ${ACROSYNC_HEADERS})
     add_custom_command(
-            TARGET acrosync
+            TARGET acrosynced
             POST_BUILD
             COMMAND ${CMAKE_COMMAND}
-            ARGS -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${file_i}" "${distribution_DIR}/acrosync/include/${file_i}"
+            ARGS -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${file_i}" "${distribution_DIR}/acrosynced/include/${file_i}"
     )
 endforeach( file_i )
 
