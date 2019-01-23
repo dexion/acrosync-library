@@ -60,12 +60,28 @@ set_target_properties(acrosync
                       LIBRARY_OUTPUT_DIRECTORY
                       "${distribution_DIR}/acrosync/lib/${ANDROID_ABI}")
 
-add_custom_command(TARGET acrosync POST_BUILD
-                   COMMAND "${CMAKE_COMMAND}" -E
-                   copy "${CMAKE_CURRENT_SOURCE_DIR}/rsync/rsync_client.h"
-                   "${distribution_DIR}/acrosync/include/rsync_client.h"
-        #                   **** the following 2 lines are for potential future debug purpose ****
-        #                   COMMAND "${CMAKE_COMMAND}" -E
-        #                   remove_directory "${CMAKE_CURRENT_BINARY_DIR}"
-                   COMMENT "Copying rsync to output directory")
+set( ACROSYNC_HEADERS
+        rsync/rsync_client.h
+        rsync/rsync_entry.h
+        rsync/rsync_file.h
+        rsync/rsync_io.h
+        rsync/rsync_log.h
+        rsync/rsync_pathutil.h
+        rsync/rsync_socketutil.h
+        rsync/rsync_socketio.h
+        rsync/rsync_sshio.h
+        rsync/rsync_stream.h
+        rsync/rsync_timeutil.h
+        rsync/rsync_util.h
+        block/block_out.h
+        )
 
+# do the copying
+foreach( file_i ${ACROSYNC_HEADERS})
+    add_custom_command(
+            TARGET acrosync
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND}
+            ARGS -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${file_i}" "${distribution_DIR}/acrosync/include/${file_i}"
+    )
+endforeach( file_i )
